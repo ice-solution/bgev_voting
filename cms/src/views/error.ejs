@@ -1,0 +1,10 @@
+<%- include("partials/layout_top", { title: "錯誤" }) %>
+
+<div class="rounded-xl border bg-white p-4">
+  <div class="text-sm text-slate-500">HTTP <%= status %></div>
+  <div class="mt-1 text-lg font-semibold"><%= message %></div>
+  <a class="mt-3 inline-flex rounded-lg bg-white px-3 py-2 text-sm font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50" href="/">返回首頁</a>
+</div>
+
+<%- include("partials/layout_bottom") %>
+

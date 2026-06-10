@@ -1,0 +1,44 @@
+<%- include("partials/layout_top", { title: "Admin - Users" }) %>
+
+<div class="flex items-center justify-between gap-3">
+  <h2 class="text-lg font-semibold">用戶列表</h2>
+  <div class="flex items-center gap-2">
+    <a class="rounded-lg bg-white px-3 py-2 text-sm font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50" href="/admin/export.xlsx">Export xlsx</a>
+    <form method="post" action="/admin/logout">
+      <button class="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800" type="submit">登出</button>
+    </form>
+  </div>
+</div>
+
+<div class="mt-4 overflow-auto rounded-xl border bg-white">
+  <table class="min-w-full text-left text-sm">
+    <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+      <tr>
+        <th class="px-3 py-2">姓名</th>
+        <th class="px-3 py-2">公司</th>
+        <th class="px-3 py-2">已玩</th>
+        <th class="px-3 py-2">問卷</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const r of rows) { %>
+        <tr class="border-t">
+          <td class="px-3 py-2">
+            <a class="font-medium underline" href="/admin/users/<%= encodeURIComponent(r.userId) %>"><%= r.name || "—" %></a>
+          </td>
+          <td class="px-3 py-2"><%= r.company || "—" %></td>
+          <td class="px-3 py-2"><%= r.playedCount %></td>
+          <td class="px-3 py-2">
+            <% if (r.survey && r.surveyAnswerCount) { %>
+              <span class="rounded bg-emerald-50 px-2 py-1 text-xs text-emerald-700">已填 (<%= r.surveyAnswerCount %> 項)</span>
+            <% } else { %>
+              <span class="rounded bg-slate-100 px-2 py-1 text-xs text-slate-600">未填</span>
+            <% } %>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<%- include("partials/layout_bottom") %>

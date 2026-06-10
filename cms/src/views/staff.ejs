@@ -1,0 +1,108 @@
+<%- include("partials/layout_top", { title: "Staff 掃描" }) %>
+
+<div class="space-y-4">
+  <section class="rounded-xl border bg-white p-4">
+    <div class="flex items-start justify-between gap-3">
+      <div class="min-w-0 flex-1">
+        <div class="text-xs text-slate-500">遊戲</div>
+        <% if (game) { %>
+          <%- include("partials/game_item", { g: game, extraClass: "mt-1" }) %>
+        <% } else { %>
+          <div class="mt-1 text-lg font-semibold">遊戲 #<%= gameId %></div>
+        <% } %>
+      </div>
+      <a class="shrink-0 rounded-lg bg-white px-3 py-2 text-sm font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50" href="/">返回</a>
+    </div>
+    <p class="mt-3 text-sm text-slate-600">
+      掃描用戶 QR（內容需包含 userId），掃到後會直接記錄「已玩」。
+    </p>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-800"><%= error %></div>
+    <% } %>
+  </section>
+
+  <% if (staffTokenEnabled && Number(staffGameId) !== Number(gameId)) { %>
+    <section class="rounded-xl border bg-slate-50 p-4">
+      <form method="post" action="/staff/<%= gameId %>/login">
+        <div class="text-sm font-medium">Staff 登入</div>
+        <div class="mt-1 text-sm text-slate-600">此頁需要 staff token（只需每個 browser session 登入一次）。</div>
+        <input name="token" class="mt-3 w-full rounded-lg border px-3 py-2" placeholder="STAFF_TOKEN" />
+        <button class="mt-3 w-full rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800" type="submit">登入</button>
+      </form>
+    </section>
+  <% } else { %>
+    <section class="rounded-xl border bg-white p-4">
+      <div id="iframeNotice" class="hidden"></div>
+      <div class="text-sm font-medium">相機掃描</div>
+      <button id="btnStartCam" class="mt-3 w-full rounded-lg bg-slate-900 px-3 py-3 text-sm font-medium text-white hover:bg-slate-800">開始掃描</button>
+
+      <div id="qrWrap" class="mt-3 hidden overflow-hidden rounded-xl border bg-slate-900">
+        <div id="qr" class="w-full"></div>
+      </div>
+
+      <button id="btnStopCam" class="mt-3 hidden w-full rounded-lg bg-white px-3 py-3 text-sm font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50">關閉鏡頭</button>
+
+      <div id="msg" class="mt-3 hidden rounded-lg px-3 py-2 text-sm"></div>
+
+      <p id="scanHint" class="mt-3 text-center text-xs text-slate-500">按「開始掃描」啟動相機</p>
+    </section>
+  <% } %>
+</div>
+
+<%- include("partials/qr_scanner_scripts") %>
+<script>
+  const msgEl = document.getElementById("msg");
+
+  function showMsg(text, type) {
+    if (!msgEl) return;
+    msgEl.textContent = text;
+    msgEl.classList.remove("hidden", "bg-emerald-50", "text-emerald-800", "bg-rose-50", "text-rose-800", "bg-slate-50", "text-slate-600");
+    if (type === "success") msgEl.classList.add("bg-emerald-50", "text-emerald-800");
+    else if (type === "error") msgEl.classList.add("bg-rose-50", "text-rose-800");
+    else msgEl.classList.add("bg-slate-50", "text-slate-600");
+  }
+
+  function extractUserId(text) {
+    const raw = (text || "").trim();
+    if (!raw) return "";
+    try {
+      const u = new URL(raw);
+      const parts = u.pathname.split("/").filter(Boolean);
+      return parts[parts.length - 1] || raw;
+    } catch (_) {
+      return raw;
+    }
+  }
+
+  if (window.QrScanner) {
+    QrScanner.mountIframeNotice("iframeNotice");
+    QrScanner.createScanner({
+      mountId: "qr",
+      btnStart: document.getElementById("btnStartCam"),
+      btnStop: document.getElementById("btnStopCam"),
+      qrWrap: document.getElementById("qrWrap"),
+      scanHint: document.getElementById("scanHint"),
+      showMsg,
+      onDecoded: async (decodedText) => {
+        const clean = extractUserId(decodedText);
+        if (!clean) return;
+        const res = await fetch("/api/staff/<%= encodeURIComponent(gameId) %>/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ userId: clean })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!data.ok) {
+          showMsg("失敗: " + (data.error || res.status), "error");
+          return;
+        }
+        const suffix = data.duplicated ? "（此用戶已記錄）" : "";
+        showMsg("掃描成功！" + suffix, "success");
+      }
+    });
+  }
+</script>
+
+<%- include("partials/layout_bottom") %>

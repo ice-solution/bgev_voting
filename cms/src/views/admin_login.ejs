@@ -1,0 +1,22 @@
+<%- include("partials/layout_top", { title: "Admin 登入" }) %>
+
+<div class="mx-auto max-w-md rounded-xl border bg-white p-4">
+  <h2 class="text-lg font-semibold">Admin 登入</h2>
+  <% if (error) { %>
+    <div class="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-800"><%= error %></div>
+  <% } %>
+  <form class="mt-4 space-y-3" method="post" action="/admin/login">
+    <div>
+      <label class="text-sm font-medium">Username</label>
+      <input name="username" class="mt-1 w-full rounded-lg border px-3 py-2" />
+    </div>
+    <div>
+      <label class="text-sm font-medium">Password</label>
+      <input name="password" type="password" class="mt-1 w-full rounded-lg border px-3 py-2" />
+    </div>
+    <button class="w-full rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800" type="submit">登入</button>
+  </form>
+</div>
+
+<%- include("partials/layout_bottom") %>
+

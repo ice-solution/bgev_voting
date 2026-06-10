@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-HK">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title || "香港學界桌上遊戲設計比賽決賽暨成果展" %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen <%= typeof pageBg !== 'undefined' ? pageBg : 'bg-slate-50' %> text-slate-900">
+    <% if (typeof hideHeader === 'undefined' || !hideHeader) { %>
+    <header class="border-b bg-white">
+      <div class="mx-auto flex max-w-5xl items-start justify-between gap-2 px-3 py-2.5 sm:px-4 sm:py-3">
+        <a href="/" class="min-w-0 flex-1 leading-tight">
+          <div class="text-[11px] font-semibold tracking-tight text-slate-900 sm:text-xs">
+            香港學界桌上遊戲設計比賽決賽暨成果展
+          </div>
+          <div class="mt-0.5 text-[8px] leading-[1.25] tracking-tight text-slate-600 sm:text-[9px]">
+            Hong Kong Schools Boardgame Design Competition Final and Project Showcase
+          </div>
+        </a>
+        <% if (typeof showUserLogout !== 'undefined' && showUserLogout) { %>
+          <form method="post" action="/u/logout" class="shrink-0">
+            <button class="rounded-lg bg-white px-2.5 py-1.5 text-xs font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50 sm:px-3 sm:py-2 sm:text-sm" type="submit">登出</button>
+          </form>
+        <% } %>
+      </div>
+    </header>
+    <% } %>
+    <main class="<%= typeof mainClass !== 'undefined' ? mainClass : 'mx-auto max-w-5xl px-3 py-4 sm:px-4 sm:py-6' %>">
