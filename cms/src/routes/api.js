@@ -6,6 +6,7 @@ const { getDb } = require("../lib/db");
 const { fetchUserProfile } = require("../lib/rsvpApi");
 const { getGames, getGameById } = require("../lib/games");
 const { getSurveyAnswerIds } = require("../lib/survey");
+const { extractProfileDisplay } = require("../lib/profile");
 
 const apiRouter = express.Router();
 
@@ -175,12 +176,14 @@ apiRouter.get("/admin/export.xlsx", async (req, res, next) => {
 
     sheet.columns = [
       { header: "userId", key: "userId", width: 24 },
+      { header: "name", key: "name", width: 20 },
+      { header: "email", key: "email", width: 28 },
+      { header: "company", key: "company", width: 24 },
       { header: "playedCount", key: "playedCount", width: 12 },
       { header: "playedGameIds", key: "playedGameIds", width: 30 },
       { header: "surveyAnswerGameIds", key: "surveyAnswerGameIds", width: 24 },
       { header: "surveyAnswerGameNames", key: "surveyAnswerGameNames", width: 40 },
-      { header: "surveyAnswerCount", key: "surveyAnswerCount", width: 12 },
-      { header: "profile", key: "profile", width: 60 }
+      { header: "surveyAnswerCount", key: "surveyAnswerCount", width: 12 }
     ];
 
     for (const u of users) {
@@ -188,14 +191,17 @@ apiRouter.get("/admin/export.xlsx", async (req, res, next) => {
       const survey = surveyByUser.get(u.userId) || null;
       const answerIds = getSurveyAnswerIds(survey);
       const answerGames = answerIds.map((id) => games.find((g) => Number(g.id) === id)).filter(Boolean);
+      const display = extractProfileDisplay(u.profile);
       sheet.addRow({
         userId: u.userId,
+        name: display.name,
+        email: display.email,
+        company: display.company,
         playedCount: played.length,
         playedGameIds: played.sort((a, b) => a - b).join(","),
         surveyAnswerGameIds: answerIds.join(","),
-        surveyAnswerGameNames: answerGames.map((g) => g.name).join(" | "),
-        surveyAnswerCount: answerIds.length,
-        profile: u.profile ? JSON.stringify(u.profile) : ""
+        surveyAnswerGameNames: answerGames.map((g) => g.name).join(", "),
+        surveyAnswerCount: answerIds.length
       });
     }
 

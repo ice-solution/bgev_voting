@@ -18,6 +18,10 @@ async function main() {
   const app = express();
   app.set("view engine", "ejs");
   app.set("views", path.join(__dirname, "views"));
+  // 反向代理（nginx 等）會帶 X-Forwarded-For，需啟用 trust proxy 讓 rate-limit 正確識別 IP
+  if (config.trustProxy) {
+    app.set("trust proxy", config.trustProxy);
+  }
 
   app.use(express.static(path.join(__dirname, "public")));
   app.use(express.json({ limit: "1mb" }));

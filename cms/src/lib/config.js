@@ -18,6 +18,17 @@ const config = {
   port: Number(process.env.PORT || 8787),
   baseUrl: process.env.BASE_URL || `http://localhost:${Number(process.env.PORT || 8787)}`,
   sessionSecret: process.env.SESSION_SECRET || "",
+  // 反向代理層數，production 預設 1（nginx）；本機預設不啟用
+  trustProxy: (() => {
+    const raw = process.env.TRUST_PROXY;
+    if (raw === "false" || raw === "0") return false;
+    if (raw === "true") return true;
+    if (raw) {
+      const n = Number(raw);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+    return process.env.NODE_ENV === "production" ? 1 : false;
+  })(),
 
   mongoUri: mustGet("MONGODB_URI"),
   mongoDb: mustGet("MONGODB_DB"),
