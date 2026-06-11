@@ -19,7 +19,7 @@
           </div>
         </a>
         <div class="flex shrink-0 items-center gap-2">
-          <%- include("partials/language_switcher") %>
+          <%- include("language_switcher") %>
           <% if (typeof showUserLogout !== 'undefined' && showUserLogout) { %>
             <form method="post" action="/u/logout">
               <button class="rounded-lg bg-white px-2.5 py-1.5 text-xs font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50 sm:px-3 sm:py-2 sm:text-sm" type="submit"><%= t('logout') %></button>
