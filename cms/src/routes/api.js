@@ -129,6 +129,11 @@ apiRouter.post("/user/survey", async (req, res, next) => {
       err.statusCode = 400;
       throw err;
     }
+    if (answerGameIds.length > config.surveyMaxVotes) {
+      const err = new Error(t(lang, "survey.max_votes", { max: config.surveyMaxVotes }));
+      err.statusCode = 400;
+      throw err;
+    }
 
     const db = await getDb();
     const playedCount = await db.collection("plays").countDocuments({ userId });
@@ -139,6 +144,12 @@ apiRouter.post("/user/survey", async (req, res, next) => {
     }
 
     const existing = await db.collection("surveys").findOne({ userId });
+    if (existing && getSurveyAnswerIds(existing).length > 0) {
+      const err = new Error(t(lang, "survey.already_voted"));
+      err.statusCode = 403;
+      throw err;
+    }
+
     await db.collection("surveys").updateOne(
       { userId },
       {
@@ -152,7 +163,7 @@ apiRouter.post("/user/survey", async (req, res, next) => {
       ok: true,
       userId,
       answerGameIds,
-      updated: Boolean(existing)
+      locked: true
     });
   } catch (e) {
     next(e);

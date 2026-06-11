@@ -86,7 +86,8 @@ webRouter.get("/u/survey", async (req, res, next) => {
       lang,
       categories: getGamesByCategory(lang),
       selectedIds,
-      hasVoted: selectedIds.length > 0
+      hasVoted: selectedIds.length > 0,
+      surveyMaxVotes: config.surveyMaxVotes
     });
   } catch (e) {
     next(e);

@@ -41,6 +41,7 @@ const config = {
   rsvpApiKey: process.env.RSVP_API_KEY || parseCsv(process.env.WEB_API_KEYS)[0] || "",
 
   surveyMinGames: Number(process.env.SURVEY_MIN_GAMES || 3),
+  surveyMaxVotes: Number(process.env.SURVEY_MAX_VOTES || 3),
 
   adminUsername: mustGet("ADMIN_USERNAME"),
   adminPassword: mustGet("ADMIN_PASSWORD"),

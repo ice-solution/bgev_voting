@@ -8,11 +8,12 @@
 
   <section class="mt-3 rounded-2xl border border-orange-200 bg-white p-4 shadow-sm">
     <h1 class="text-lg font-bold text-[#4a2c1a]"><%= t('survey.heading') %></h1>
-    <p class="mt-1 text-sm text-slate-600"><%= t('survey.desc') %></p>
     <% if (hasVoted) { %>
-      <div class="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
-        <%= t('survey.voted_hint') %>
+      <div class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900">
+        <%= t('survey.voted_locked') %>
       </div>
+    <% } else { %>
+      <p class="mt-1 text-sm text-slate-600"><%= t('survey.desc', { max: surveyMaxVotes }) %></p>
     <% } %>
   </section>
 
@@ -34,9 +35,10 @@
             <% for (const g of group.games) { %>
               <button
                 type="button"
-                class="game-option rounded-lg border border-slate-200 bg-white px-2 py-3 text-left transition hover:border-slate-300"
+                class="game-option rounded-lg border border-slate-200 bg-white px-2 py-3 text-left transition hover:border-slate-300 disabled:cursor-not-allowed disabled:opacity-60"
                 data-id="<%= g.id %>"
                 data-category="<%= group.category %>"
+                <%= hasVoted ? 'disabled' : '' %>
               >
                 <div class="text-xs font-semibold leading-snug text-slate-900"><%= g.name %></div>
                 <div class="mt-1 text-[10px] leading-tight text-slate-500"><%= g.school_name %></div>
@@ -49,12 +51,14 @@
   </div>
 </div>
 
+<% if (!hasVoted) { %>
 <div class="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white px-4 py-3">
   <div class="mx-auto max-w-md">
-    <div id="selectedSummary" class="mb-2 text-center text-xs text-slate-500"><%= t('survey.selected_summary', { count: 0 }) %></div>
+    <div id="selectedSummary" class="mb-2 text-center text-xs text-slate-500"><%= t('survey.selected_summary', { count: 0, max: surveyMaxVotes }) %></div>
     <button id="btnSubmit" class="w-full rounded-xl bg-[#4a2c1a] px-4 py-3 text-sm font-semibold text-white hover:bg-[#3d2415]"><%= t('survey.submit') %></button>
   </div>
 </div>
+<% } %>
 
 <div id="successModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-4">
   <div class="w-full max-w-xs rounded-2xl bg-white p-6 text-center shadow-xl">
@@ -67,9 +71,14 @@
 
 <script>
   const surveyI18n = {
+    maxVotes: <%= surveyMaxVotes %>,
+    hasVoted: <%= hasVoted ? 'true' : 'false' %>,
     selectedCount: <%- JSON.stringify(t('survey.selected_count', { count: '__COUNT__' })) %>,
-    selectedSummary: <%- JSON.stringify(t('survey.selected_summary', { count: '__COUNT__' })) %>,
+    selectedSummary: <%- JSON.stringify(t('survey.selected_summary', { count: '__COUNT__', max: surveyMaxVotes })) %>,
     selectAtLeastOne: <%- JSON.stringify(t('survey.select_at_least_one')) %>,
+    maxVotesAlert: <%- JSON.stringify(t('survey.max_votes_alert', { max: surveyMaxVotes })) %>,
+    confirmUnderMax: <%- JSON.stringify(t('survey.confirm_under_max')) %>,
+    confirmFinal: <%- JSON.stringify(t('survey.confirm_final')) %>,
     submitting: <%- JSON.stringify(t('survey.submitting')) %>,
     submit: <%- JSON.stringify(t('survey.submit')) %>,
     submitFail: <%- JSON.stringify(t('survey.submit_fail', { error: '__ERROR__' })) %>
@@ -119,40 +128,54 @@
     });
   });
 
-  document.querySelectorAll(".game-option").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = Number(btn.dataset.id);
-      if (selected.has(id)) selected.delete(id);
-      else selected.add(id);
-      syncOptionStyles();
+  if (!surveyI18n.hasVoted) {
+    document.querySelectorAll(".game-option").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = Number(btn.dataset.id);
+        if (selected.has(id)) {
+          selected.delete(id);
+        } else {
+          if (selected.size >= surveyI18n.maxVotes) {
+            alert(surveyI18n.maxVotesAlert);
+            return;
+          }
+          selected.add(id);
+        }
+        syncOptionStyles();
+      });
     });
-  });
 
-  document.getElementById("btnSubmit").addEventListener("click", async () => {
-    if (!selected.size) {
-      alert(surveyI18n.selectAtLeastOne);
-      return;
-    }
-    const btn = document.getElementById("btnSubmit");
-    btn.disabled = true;
-    btn.textContent = surveyI18n.submitting;
-    const res = await fetch("/api/user/survey", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({ answerGameIds: [...selected] })
+    document.getElementById("btnSubmit").addEventListener("click", async () => {
+      if (!selected.size) {
+        alert(surveyI18n.selectAtLeastOne);
+        return;
+      }
+      if (selected.size < surveyI18n.maxVotes) {
+        if (!window.confirm(surveyI18n.confirmUnderMax)) return;
+      }
+      if (!window.confirm(surveyI18n.confirmFinal)) return;
+
+      const btn = document.getElementById("btnSubmit");
+      btn.disabled = true;
+      btn.textContent = surveyI18n.submitting;
+      const res = await fetch("/api/user/survey", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ answerGameIds: [...selected] })
+      });
+      const data = await res.json().catch(() => ({}));
+      btn.disabled = false;
+      btn.textContent = surveyI18n.submit;
+      if (!data.ok) {
+        alert(surveyI18n.submitFail.replace("__ERROR__", data.error || res.status));
+        return;
+      }
+      const modal = document.getElementById("successModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
     });
-    const data = await res.json().catch(() => ({}));
-    btn.disabled = false;
-    btn.textContent = surveyI18n.submit;
-    if (!data.ok) {
-      alert(surveyI18n.submitFail.replace("__ERROR__", data.error || res.status));
-      return;
-    }
-    const modal = document.getElementById("successModal");
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-  });
+  }
 
   document.getElementById("btnModalOk").addEventListener("click", () => {
     location.href = "/u/profile";
