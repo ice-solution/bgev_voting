@@ -1,4 +1,27 @@
 (function () {
+  const DEFAULT_I18N = {
+    alignQr: "請對準 QR Code...",
+    libLoadFail: "掃描程式載入失敗，請重新整理頁面。",
+    noCamera: "找不到相機",
+    cameraBusy: "相機正在啟動中，請稍候再試。",
+    iframeCameraDenied: "iframe 內無法使用相機。請按「在新視窗開啟」後再掃描。",
+    cameraFail: "相機啟動失敗：{{msg}}",
+    iframeTitle: "此頁面正在 iframe 內顯示",
+    iframeBody: "掃描 QR 需要相機權限。若無法啟動相機，請在新視窗開啟此頁。",
+    iframeOpenNew: "在新視窗開啟"
+  };
+
+  function mergeI18n(custom) {
+    return { ...DEFAULT_I18N, ...(custom || {}) };
+  }
+
+  function fillTemplate(text, vars) {
+    if (!text) return "";
+    return String(text).replace(/\{\{(\w+)\}\}/g, (_, key) =>
+      vars && vars[key] != null ? String(vars[key]) : ""
+    );
+  }
+
   function isInIframe() {
     try {
       return window.self !== window.top;
@@ -11,15 +34,15 @@
     window.open(window.location.href, "_blank", "noopener,noreferrer");
   }
 
-  function formatCameraError(err) {
+  function formatCameraError(err, i18n) {
     const msg = err && err.message ? err.message : String(err || "");
     if (/already under transition/i.test(msg)) {
-      return "相機正在啟動中，請稍候再試。";
+      return i18n.cameraBusy;
     }
     if (isInIframe() && /permission|denied|notallowed|security/i.test(msg)) {
-      return "iframe 內無法使用相機。請按「在新視窗開啟」後再掃描。";
+      return i18n.iframeCameraDenied;
     }
-    return "相機啟動失敗: " + msg;
+    return fillTemplate(i18n.cameraFail, { msg });
   }
 
   function pickBackCameraId(devices) {
@@ -33,16 +56,19 @@
     return devices.length > 1 ? devices[devices.length - 1].id : devices[0].id;
   }
 
-  function mountIframeNotice(containerId) {
+  function mountIframeNotice(containerId, i18n) {
+    const labels = mergeI18n(i18n);
     if (!isInIframe()) return;
     const el = document.getElementById(containerId);
     if (!el) return;
     el.classList.remove("hidden");
     el.innerHTML =
       '<div class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">' +
-      '<div class="font-medium">此頁面正在 iframe 內顯示</div>' +
-      '<p class="mt-1 text-xs leading-relaxed">掃描 QR 需要相機權限。若無法啟動相機，請在新視窗開啟此頁。</p>' +
-      '<button type="button" id="btnOpenNewWindow" class="mt-2 w-full rounded-lg bg-[#4a2c1a] px-3 py-2 text-xs font-medium text-white">在新視窗開啟</button>' +
+      '<div class="font-medium">' + labels.iframeTitle + "</div>" +
+      '<p class="mt-1 text-xs leading-relaxed">' + labels.iframeBody + "</p>" +
+      '<button type="button" id="btnOpenNewWindow" class="mt-2 w-full rounded-lg bg-[#4a2c1a] px-3 py-2 text-xs font-medium text-white">' +
+      labels.iframeOpenNew +
+      "</button>" +
       "</div>";
     const btn = document.getElementById("btnOpenNewWindow");
     if (btn) btn.addEventListener("click", openInNewWindow);
@@ -56,8 +82,10 @@
       qrWrap,
       scanHint,
       showMsg,
-      onDecoded
+      onDecoded,
+      i18n: customI18n
     } = opts;
+    const i18n = mergeI18n(customI18n);
 
     let qr = null;
     let scanning = false;
@@ -107,13 +135,13 @@
 
       try {
         if (typeof Html5Qrcode === "undefined") {
-          showMsg("掃描程式載入失敗，請重新整理頁面。", "error");
+          showMsg(i18n.libLoadFail, "error");
           return;
         }
         if (!qr) qr = new Html5Qrcode(mountId);
 
         updateScanUi(true);
-        showMsg("請對準 QR Code...", "info");
+        showMsg(i18n.alignQr, "info");
         processing = false;
 
         const qrboxSize = Math.min(280, Math.floor(window.innerWidth - 64));
@@ -126,21 +154,20 @@
           await onDecoded(decodedText);
         };
 
-        // 優先使用後置鏡頭（environment）
         try {
           await qr.start({ facingMode: "environment" }, scanConfig, onScan);
         } catch (_) {
           const devices = await Html5Qrcode.getCameras();
           const cameraId = pickBackCameraId(devices);
           if (!cameraId) {
-            showMsg("找不到相機", "error");
+            showMsg(i18n.noCamera, "error");
             return;
           }
           await qr.start(cameraId, scanConfig, onScan);
         }
         scanning = true;
       } catch (e) {
-        showMsg(formatCameraError(e), "error");
+        showMsg(formatCameraError(e, i18n), "error");
         scanning = false;
         processing = false;
         updateScanUi(false);

@@ -7,6 +7,7 @@ const { fetchUserProfile } = require("../lib/rsvpApi");
 const { getGames, getGameById } = require("../lib/games");
 const { getSurveyAnswerIds } = require("../lib/survey");
 const { extractProfileDisplay } = require("../lib/profile");
+const { t, normalizeLang } = require("../lib/i18n");
 
 const apiRouter = express.Router();
 
@@ -103,9 +104,13 @@ apiRouter.post("/staff/:gameId/confirm", async (req, res, next) => {
   }
 });
 
+function userLang(req) {
+  return normalizeLang(req.session?.lang) || "zh";
+}
+
 function requireUserSession(req) {
   if (!req.session.userId) {
-    const err = new Error("請先掃描 QR Code 登入");
+    const err = new Error(t(userLang(req), "api.login_required"));
     err.statusCode = 401;
     throw err;
   }
@@ -118,8 +123,9 @@ apiRouter.post("/user/survey", async (req, res, next) => {
     const rawIds = Array.isArray(req.body.answerGameIds) ? req.body.answerGameIds : [];
     const answerGameIds = [...new Set(rawIds.map((id) => Number(id)).filter((id) => getGameById(id)))];
 
+    const lang = userLang(req);
     if (!answerGameIds.length) {
-      const err = new Error("請至少選擇一個遊戲");
+      const err = new Error(t(lang, "survey.select_at_least_one"));
       err.statusCode = 400;
       throw err;
     }
@@ -127,7 +133,7 @@ apiRouter.post("/user/survey", async (req, res, next) => {
     const db = await getDb();
     const playedCount = await db.collection("plays").countDocuments({ userId });
     if (playedCount < config.surveyMinGames) {
-      const err = new Error(`未達填寫問卷資格（需完成 ${config.surveyMinGames} 個遊戲）`);
+      const err = new Error(t(lang, "profile.survey_not_eligible", { min: config.surveyMinGames }));
       err.statusCode = 403;
       throw err;
     }

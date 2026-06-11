@@ -28,12 +28,14 @@
   </section>
 </div>
 
+<%- include("partials/scanner_i18n") %>
 <%- include("partials/qr_scanner_scripts") %>
 <script>
   const scanI18n = {
     scanFail: <%- JSON.stringify(t('u.scan_fail')) %>,
     scanSuccess: <%- JSON.stringify(t('u.scan_success')) %>
   };
+  const scannerI18n = window.__scannerI18n || {};
 
   const msgEl = document.getElementById("msg");
 
@@ -59,13 +61,14 @@
   }
 
   if (window.QrScanner) {
-    QrScanner.mountIframeNotice("iframeNotice");
+    QrScanner.mountIframeNotice("iframeNotice", scannerI18n);
     QrScanner.createScanner({
       mountId: "qr",
       btnStart: document.getElementById("btnStartCam"),
       btnStop: document.getElementById("btnStopCam"),
       qrWrap: document.getElementById("qrWrap"),
       scanHint: document.getElementById("scanHint"),
+      i18n: scannerI18n,
       showMsg,
       onDecoded: async (decodedText) => {
         const userId = extractUserId(decodedText);

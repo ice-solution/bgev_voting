@@ -7,6 +7,9 @@ const STRINGS = {
     lang_en: "EN",
     game_played: "已玩",
     game_not_played: "未玩",
+    api: {
+      login_required: "請先掃描 QR Code 登入"
+    },
     home: {
       title: "參賽作品投票",
       badge: "投票",
@@ -36,6 +39,36 @@ const STRINGS = {
       invalid_qr: "無效的 QR Code",
       session_save_fail: "登入狀態儲存失敗，請再試一次"
     },
+    scanner: {
+      align_qr: "請對準 QR Code...",
+      lib_load_fail: "掃描程式載入失敗，請重新整理頁面。",
+      no_camera: "找不到相機",
+      camera_busy: "相機正在啟動中，請稍候再試。",
+      iframe_camera_denied: "iframe 內無法使用相機。請按「在新視窗開啟」後再掃描。",
+      camera_fail: "相機啟動失敗：{{msg}}",
+      iframe_title: "此頁面正在 iframe 內顯示",
+      iframe_body: "掃描 QR 需要相機權限。若無法啟動相機，請在新視窗開啟此頁。",
+      iframe_open_new: "在新視窗開啟",
+      staff_fail: "失敗：{{error}}",
+      staff_success: "掃描成功！",
+      staff_duplicated: "（此用戶已記錄）"
+    },
+    survey: {
+      title: "問卷投票",
+      back: "← 返回我的資料",
+      heading: "你喜歡那個遊戲？",
+      desc: "可按組別展開，點選喜歡的遊戲（可多選）。",
+      voted_hint: "你已提交投票，可修改選擇後再次提交。",
+      selected_count: "{{count}} 已選",
+      selected_summary: "已選 {{count}} 個遊戲",
+      submit: "提交投票",
+      submitting: "提交中...",
+      select_at_least_one: "請至少選擇一個遊戲",
+      submit_fail: "提交失敗：{{error}}",
+      success_title: "投票成功",
+      success_body: "感謝你的參與！",
+      success_back: "返回我的資料"
+    },
     profile: {
       title: "我的資料",
       personal: "個人資料",
@@ -61,6 +94,9 @@ const STRINGS = {
     lang_en: "EN",
     game_played: "Played",
     game_not_played: "Not played",
+    api: {
+      login_required: "Please scan your QR code to sign in first"
+    },
     home: {
       title: "Vote for Entries",
       badge: "Voting",
@@ -90,6 +126,36 @@ const STRINGS = {
       scan_success: "Scan successful. Signing in...",
       invalid_qr: "Invalid QR code",
       session_save_fail: "Could not save sign-in state. Please try again."
+    },
+    scanner: {
+      align_qr: "Align with the QR code...",
+      lib_load_fail: "Scanner failed to load. Please refresh the page.",
+      no_camera: "No camera found",
+      camera_busy: "Camera is starting. Please wait and try again.",
+      iframe_camera_denied: "Camera is unavailable inside an iframe. Tap \"Open in new window\" to scan.",
+      camera_fail: "Failed to start camera: {{msg}}",
+      iframe_title: "This page is shown inside an iframe",
+      iframe_body: "Scanning requires camera access. If the camera cannot start, open this page in a new window.",
+      iframe_open_new: "Open in new window",
+      staff_fail: "Failed: {{error}}",
+      staff_success: "Scan successful!",
+      staff_duplicated: "(Already recorded)"
+    },
+    survey: {
+      title: "Survey & Vote",
+      back: "← Back to my profile",
+      heading: "Which games do you like?",
+      desc: "Expand each group and tap to select your favourites (multiple choices allowed).",
+      voted_hint: "You have already voted. You may update your choices and submit again.",
+      selected_count: "{{count}} selected",
+      selected_summary: "{{count}} game(s) selected",
+      submit: "Submit vote",
+      submitting: "Submitting...",
+      select_at_least_one: "Please select at least one game",
+      submit_fail: "Submission failed: {{error}}",
+      success_title: "Vote submitted",
+      success_body: "Thank you for participating!",
+      success_back: "Back to my profile"
     },
     profile: {
       title: "My Profile",
@@ -145,10 +211,28 @@ function getCategoryLabel(categoryKey, lang) {
   return CATEGORY_LABELS[categoryKey]?.[l] || categoryKey;
 }
 
+function getScannerStrings(lang) {
+  return {
+    alignQr: t(lang, "scanner.align_qr"),
+    libLoadFail: t(lang, "scanner.lib_load_fail"),
+    noCamera: t(lang, "scanner.no_camera"),
+    cameraBusy: t(lang, "scanner.camera_busy"),
+    iframeCameraDenied: t(lang, "scanner.iframe_camera_denied"),
+    cameraFail: t(lang, "scanner.camera_fail"),
+    iframeTitle: t(lang, "scanner.iframe_title"),
+    iframeBody: t(lang, "scanner.iframe_body"),
+    iframeOpenNew: t(lang, "scanner.iframe_open_new"),
+    staffFail: t(lang, "scanner.staff_fail"),
+    staffSuccess: t(lang, "scanner.staff_success"),
+    staffDuplicated: t(lang, "scanner.staff_duplicated")
+  };
+}
+
 module.exports = {
   STRINGS,
   CATEGORY_LABELS,
   normalizeLang,
   t,
-  getCategoryLabel
+  getCategoryLabel,
+  getScannerStrings
 };

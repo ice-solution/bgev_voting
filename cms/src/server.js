@@ -8,7 +8,7 @@ const rateLimit = require("express-rate-limit");
 
 const { config } = require("./lib/config");
 const { ensureIndexes } = require("./lib/db");
-const { t } = require("./lib/i18n");
+const { t, getScannerStrings } = require("./lib/i18n");
 const { languageMiddleware } = require("./lib/language");
 
 const { webRouter } = require("./routes/web");
@@ -76,6 +76,7 @@ async function main() {
     res.locals.userId = req.session.userId || null;
     res.locals.htmlLang = lang === "en" ? "en" : "zh-HK";
     res.locals.t = (key, vars) => t(lang, key, vars);
+    res.locals.scannerI18n = getScannerStrings(lang);
     next();
   });
 
