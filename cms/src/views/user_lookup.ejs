@@ -1,9 +1,9 @@
-<%- include("partials/layout_top", { title: "掃描登入" }) %>
+<%- include("partials/layout_top", { title: t('u.title') }) %>
 
 <div class="mx-auto max-w-md space-y-4">
   <section class="rounded-xl border bg-white p-4">
-    <h2 class="text-lg font-semibold">掃描 QR Code 登入</h2>
-    <p class="mt-1 text-sm text-slate-600">請使用相機掃描你的 QR Code 以查看個人資料與遊戲進度。</p>
+    <h2 class="text-lg font-semibold"><%= t('u.heading') %></h2>
+    <p class="mt-1 text-sm text-slate-600"><%= t('u.desc') %></p>
 
     <% if (error) { %>
       <div class="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-800"><%= error %></div>
@@ -12,24 +12,29 @@
 
   <section class="rounded-xl border bg-white p-4">
     <div id="iframeNotice" class="hidden"></div>
-    <div class="text-sm font-medium">相機掃描</div>
-    <button id="btnStartCam" class="mt-3 w-full rounded-lg bg-slate-900 px-3 py-3 text-sm font-medium text-white hover:bg-slate-800">開始掃描</button>
+    <div class="text-sm font-medium"><%= t('u.camera') %></div>
+    <button id="btnStartCam" class="mt-3 w-full rounded-lg bg-slate-900 px-3 py-3 text-sm font-medium text-white hover:bg-slate-800"><%= t('u.start_scan') %></button>
 
     <div id="qrWrap" class="mt-3 hidden overflow-hidden rounded-xl border bg-slate-900">
       <div id="qr" class="w-full"></div>
     </div>
 
-    <button id="btnStopCam" class="mt-3 hidden w-full rounded-lg bg-white px-3 py-3 text-sm font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50">關閉鏡頭</button>
+    <button id="btnStopCam" class="mt-3 hidden w-full rounded-lg bg-white px-3 py-3 text-sm font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50"><%= t('u.stop_scan') %></button>
 
     <div id="msg" class="mt-3 hidden rounded-lg px-3 py-2 text-sm"></div>
 
-    <p id="scanHint" class="mt-3 text-center text-xs text-slate-500">按「開始掃描」啟動相機</p>
-    <p class="mt-2 text-center text-xs text-slate-500">如 iOS 未授權相機，請到 Safari 設定允許相機。</p>
+    <p id="scanHint" class="mt-3 text-center text-xs text-slate-500"><%= t('u.scan_hint') %></p>
+    <p class="mt-2 text-center text-xs text-slate-500"><%= t('u.ios_hint') %></p>
   </section>
 </div>
 
 <%- include("partials/qr_scanner_scripts") %>
 <script>
+  const scanI18n = {
+    scanFail: <%- JSON.stringify(t('u.scan_fail')) %>,
+    scanSuccess: <%- JSON.stringify(t('u.scan_success')) %>
+  };
+
   const msgEl = document.getElementById("msg");
 
   function showMsg(text, type) {
@@ -65,10 +70,10 @@
       onDecoded: async (decodedText) => {
         const userId = extractUserId(decodedText);
         if (!userId) {
-          showMsg("無法辨識 QR Code 內容，請再試一次。", "error");
+          showMsg(scanI18n.scanFail, "error");
           return;
         }
-        showMsg("掃描成功，正在登入...", "success");
+        showMsg(scanI18n.scanSuccess, "success");
         window.location.replace("/u/enter/" + encodeURIComponent(userId));
       }
     });

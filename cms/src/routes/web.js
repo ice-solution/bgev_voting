@@ -1,10 +1,12 @@
 const express = require("express");
 const { config } = require("../lib/config");
 const { getGames, getGameById, getGamesByCategory } = require("../lib/games");
-const { getDb } = require("../lib/db");
+const { getDb, clearAllData } = require("../lib/db");
 const { fetchUserProfile, fetchUserProfileByServer } = require("../lib/rsvpApi");
 const { extractProfileDisplay } = require("../lib/profile");
 const { getSurveyAnswerIds, hasSurvey } = require("../lib/survey");
+const { t, normalizeLang } = require("../lib/i18n");
+const { applyLanguage, persistUserLanguage, loadUserLanguage, setLanguageCookie } = require("../lib/language");
 
 const webRouter = express.Router();
 
@@ -39,7 +41,8 @@ async function renderUserProfile(req, res, userId) {
   const plays = await db.collection("plays").find({ userId }).toArray();
   const survey = await db.collection("surveys").findOne({ userId });
   const playedGameIds = new Set(plays.map((p) => Number(p.gameId)));
-  const games = getGames().map((g) => ({
+  const lang = res.locals.lang || "zh";
+  const games = getGames(lang).map((g) => ({
     ...g,
     played: playedGameIds.has(Number(g.id))
   }));
@@ -75,7 +78,7 @@ webRouter.get("/u/survey", async (req, res, next) => {
     const survey = await db.collection("surveys").findOne({ userId });
     const selectedIds = getSurveyAnswerIds(survey);
     res.render("user_survey", {
-      categories: getGamesByCategory(),
+      categories: getGamesByCategory(res.locals.lang),
       selectedIds,
       hasVoted: selectedIds.length > 0
     });
@@ -86,9 +89,21 @@ webRouter.get("/u/survey", async (req, res, next) => {
 
 webRouter.get("/", (req, res) => {
   res.render("home", {
-    categories: getGamesByCategory(),
+    categories: getGamesByCategory(res.locals.lang),
     surveyMinGames: config.surveyMinGames
   });
+});
+
+webRouter.post("/set-language", async (req, res, next) => {
+  try {
+    const lang = normalizeLang(req.body.lang) || "zh";
+    await applyLanguage(req, res, lang);
+    const redirect = String(req.body.redirect || "/").trim() || "/";
+    const safeRedirect = redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/";
+    res.redirect(safeRedirect);
+  } catch (e) {
+    next(e);
+  }
 });
 
 webRouter.get("/web/:eventId/users/:userId", async (req, res, next) => {
@@ -116,21 +131,36 @@ webRouter.get("/u", (req, res) => {
 });
 
 function redirectWithSession(req, res, path) {
+  const lang = req.session.lang || "zh";
   req.session.save((err) => {
     if (err) {
-      return res.redirect("/u?error=" + encodeURIComponent("登入狀態儲存失敗，請再試一次"));
+      return res.redirect("/u?error=" + encodeURIComponent(t(lang, "u.session_save_fail")));
     }
     res.redirect(path);
   });
 }
 
+async function syncUserLanguageOnLogin(req, res, userId) {
+  const savedLang = await loadUserLanguage(userId);
+  if (savedLang) {
+    req.session.lang = savedLang;
+    setLanguageCookie(res, savedLang);
+    return;
+  }
+  if (req.session.lang) {
+    await persistUserLanguage(userId, req.session.lang);
+  }
+}
+
 webRouter.get("/u/enter/:userId", async (req, res) => {
+  const lang = req.session.lang || "zh";
   const userId = String(req.params.userId).trim();
   if (!userId) {
-    return res.redirect("/u?error=" + encodeURIComponent("無效的 QR Code"));
+    return res.redirect("/u?error=" + encodeURIComponent(t(lang, "u.invalid_qr")));
   }
 
   req.session.userId = userId;
+  await syncUserLanguageOnLogin(req, res, userId);
   try {
     await syncUserFromRsvp(req, userId);
   } catch (_) {
@@ -141,6 +171,9 @@ webRouter.get("/u/enter/:userId", async (req, res) => {
       req.session.userName = display.name;
       req.session.userCompany = display.company;
     }
+  }
+  if (req.session.lang) {
+    await persistUserLanguage(userId, req.session.lang);
   }
   return redirectWithSession(req, res, "/u/profile");
 });
@@ -236,9 +269,38 @@ webRouter.get("/admin/users", async (req, res, next) => {
       };
     });
 
-    res.render("admin_users", { rows });
+    res.render("admin_users", {
+      rows,
+      cleared: req.query.cleared === "1",
+      clearError: req.query.clear_error || null
+    });
   } catch (e) {
     next(e);
+  }
+});
+
+webRouter.post("/admin/clear-data", async (req, res) => {
+  if (!req.session.adminUser) return res.redirect("/admin");
+
+  const confirmText = String(req.body.confirmText || "").trim();
+  const understood = req.body.understood === "on" || req.body.understood === "true";
+  const password = String(req.body.password || "");
+
+  if (!understood) {
+    return res.redirect("/admin/users?clear_error=" + encodeURIComponent("請勾選確認你了解此操作無法復原"));
+  }
+  if (confirmText !== "DELETE ALL") {
+    return res.redirect("/admin/users?clear_error=" + encodeURIComponent('請輸入正確確認文字「DELETE ALL」'));
+  }
+  if (password !== config.adminPassword) {
+    return res.redirect("/admin/users?clear_error=" + encodeURIComponent("Admin 密碼不正確"));
+  }
+
+  try {
+    await clearAllData();
+    return res.redirect("/admin/users?cleared=1");
+  } catch (e) {
+    return res.redirect("/admin/users?clear_error=" + encodeURIComponent(e.message || "清除失敗"));
   }
 });
 

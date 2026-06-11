@@ -8,6 +8,8 @@ const rateLimit = require("express-rate-limit");
 
 const { config } = require("./lib/config");
 const { ensureIndexes } = require("./lib/db");
+const { t } = require("./lib/i18n");
+const { languageMiddleware } = require("./lib/language");
 
 const { webRouter } = require("./routes/web");
 const { apiRouter } = require("./routes/api");
@@ -60,7 +62,10 @@ async function main() {
     })
   );
 
+  app.use(languageMiddleware());
+
   app.use((req, res, next) => {
+    const lang = res.locals.lang || "zh";
     res.locals.baseUrl = config.baseUrl;
     res.locals.env = config.env;
     res.locals.surveyMinGames = config.surveyMinGames;
@@ -69,6 +74,8 @@ async function main() {
     res.locals.adminUser = req.session.adminUser || null;
     res.locals.staffGameId = req.session.staffGameId || null;
     res.locals.userId = req.session.userId || null;
+    res.locals.htmlLang = lang === "en" ? "en" : "zh-HK";
+    res.locals.t = (key, vars) => t(lang, key, vars);
     next();
   });
 

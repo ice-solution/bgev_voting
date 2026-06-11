@@ -3,8 +3,8 @@
     <div class="flex flex-wrap items-center gap-1.5">
       <span class="font-medium"><%= g.name %></span>
       <span class="text-xs font-normal text-slate-400">#<%= g.id %></span>
-      <% if (g.category) { %>
-        <span class="rounded bg-slate-200 px-1.5 py-0.5 text-xs text-slate-700"><%= g.category %></span>
+      <% if (g.categoryLabel || g.category) { %>
+        <span class="rounded bg-slate-200 px-1.5 py-0.5 text-xs text-slate-700"><%= g.categoryLabel || g.category %></span>
       <% } %>
     </div>
     <% if (g.school_name) { %>
@@ -13,7 +13,7 @@
   </div>
   <% if (typeof played !== 'undefined') { %>
     <div class="shrink-0 text-xs <%= played ? 'text-emerald-700' : 'text-slate-500' %>">
-      <%= played ? '已玩' : '未玩' %>
+      <%= played ? t('game_played') : t('game_not_played') %>
     </div>
   <% } %>
 </div>

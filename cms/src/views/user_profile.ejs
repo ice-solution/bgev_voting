@@ -1,21 +1,21 @@
-<%- include("partials/layout_top", { title: "我的資料", showUserLogout: true }) %>
+<%- include("partials/layout_top", { title: t('profile.title'), showUserLogout: true }) %>
 
 <div class="grid gap-4 md:grid-cols-3">
   <section class="md:col-span-2 rounded-xl border bg-white p-4">
-    <h2 class="text-lg font-semibold">個人資料</h2>
+    <h2 class="text-lg font-semibold"><%= t('profile.personal') %></h2>
 
     <% if (profileError) { %>
       <div class="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-800">
-        無法取得資料：<%= profileError %>
+        <%= t('profile.profile_error', { error: profileError }) %>
       </div>
     <% } else { %>
       <dl class="mt-4 space-y-3">
         <div>
-          <dt class="text-xs text-slate-500">姓名</dt>
+          <dt class="text-xs text-slate-500"><%= t('profile.name') %></dt>
           <dd class="text-base font-medium"><%= displayName || "—" %></dd>
         </div>
         <div>
-          <dt class="text-xs text-slate-500">公司</dt>
+          <dt class="text-xs text-slate-500"><%= t('profile.company') %></dt>
           <dd class="text-base font-medium"><%= displayCompany || "—" %></dd>
         </div>
       </dl>
@@ -25,9 +25,9 @@
   <aside class="rounded-xl border bg-white p-4">
     <% const totalGames = games.length || 1; const progressPct = Math.min(100, Math.round((playedCount / totalGames) * 100)); %>
     <div class="flex items-center justify-between text-sm">
-      <span class="font-medium">進度</span>
+      <span class="font-medium"><%= t('profile.progress') %></span>
       <span class="text-slate-600">
-        已玩 <span class="font-semibold text-slate-900"><%= playedCount %></span> / <%= games.length %>
+        <%= t('profile.played_count', { played: playedCount, total: games.length }) %>
       </span>
     </div>
     <div class="mt-3 h-3 w-full overflow-hidden rounded-full bg-slate-100">
@@ -37,33 +37,33 @@
       ></div>
     </div>
     <div class="mt-1.5 text-right text-xs text-slate-500"><%= progressPct %>%</div>
-    <div class="mt-2 text-xs text-slate-500">完成 <%= surveyMinGames %> 個遊戲後可填問卷。</div>
+    <div class="mt-2 text-xs text-slate-500"><%= t('profile.survey_hint', { min: surveyMinGames }) %></div>
 
     <div class="mt-4">
-      <div class="text-sm font-medium">問卷</div>
+      <div class="text-sm font-medium"><%= t('profile.survey') %></div>
       <% if (!canSurvey) { %>
         <div class="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700">
-          未達資格（需完成 <%= surveyMinGames %> 個遊戲）。
+          <%= t('profile.survey_not_eligible', { min: surveyMinGames }) %>
         </div>
       <% } else if (hasVoted) { %>
         <div class="mt-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-          已投票（<%= votedGames.length %> 項）
+          <%= t('profile.survey_voted', { count: votedGames.length }) %>
         </div>
         <ul class="mt-2 space-y-1 text-xs text-slate-600">
           <% for (const g of votedGames) { %>
             <li>• <%= g.name %> — <%= g.school_name %></li>
           <% } %>
         </ul>
-        <a href="/u/survey" class="mt-3 flex w-full items-center justify-center rounded-lg bg-white px-3 py-2 text-sm font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50">修改問卷</a>
+        <a href="/u/survey" class="mt-3 flex w-full items-center justify-center rounded-lg bg-white px-3 py-2 text-sm font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50"><%= t('profile.survey_edit') %></a>
       <% } else { %>
-        <a href="/u/survey" class="mt-2 flex w-full items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800">填寫問卷</a>
+        <a href="/u/survey" class="mt-2 flex w-full items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"><%= t('profile.survey_fill') %></a>
       <% } %>
     </div>
   </aside>
 </div>
 
 <section class="mt-4 rounded-xl border bg-white p-4">
-  <h3 class="text-lg font-semibold">已玩遊戲</h3>
+  <h3 class="text-lg font-semibold"><%= t('profile.played_games') %></h3>
   <div class="mt-3 grid gap-2 md:grid-cols-2">
     <% for (const g of games) { %>
       <div class="rounded-lg px-3 py-2 <%= g.played ? "bg-emerald-50" : "bg-slate-50" %>">

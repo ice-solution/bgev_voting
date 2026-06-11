@@ -22,6 +22,17 @@
     return "相機啟動失敗: " + msg;
   }
 
+  function pickBackCameraId(devices) {
+    if (!devices || !devices.length) return null;
+    const backPattern = /back|rear|environment|後置|背面/i;
+    const frontPattern = /front|user|selfie|facetime|前置|前面/i;
+    const back = devices.find((d) => backPattern.test(d.label || ""));
+    if (back) return back.id;
+    const notFront = devices.find((d) => !frontPattern.test(d.label || ""));
+    if (notFront) return notFront.id;
+    return devices.length > 1 ? devices[devices.length - 1].id : devices[0].id;
+  }
+
   function mountIframeNotice(containerId) {
     if (!isInIframe()) return;
     const el = document.getElementById(containerId);
@@ -100,28 +111,33 @@
           return;
         }
         if (!qr) qr = new Html5Qrcode(mountId);
-        const devices = await Html5Qrcode.getCameras();
-        if (!devices || !devices.length) {
-          showMsg("找不到相機", "error");
-          return;
-        }
 
         updateScanUi(true);
         showMsg("請對準 QR Code...", "info");
         processing = false;
 
         const qrboxSize = Math.min(280, Math.floor(window.innerWidth - 64));
-        await qr.start(
-          devices[0].id,
-          { fps: 10, qrbox: { width: qrboxSize, height: qrboxSize } },
-          async (decodedText) => {
-            if (processing || decoded) return;
-            processing = true;
-            decoded = true;
-            await stopCamera(true);
-            await onDecoded(decodedText);
+        const scanConfig = { fps: 10, qrbox: { width: qrboxSize, height: qrboxSize } };
+        const onScan = async (decodedText) => {
+          if (processing || decoded) return;
+          processing = true;
+          decoded = true;
+          await stopCamera(true);
+          await onDecoded(decodedText);
+        };
+
+        // 優先使用後置鏡頭（environment）
+        try {
+          await qr.start({ facingMode: "environment" }, scanConfig, onScan);
+        } catch (_) {
+          const devices = await Html5Qrcode.getCameras();
+          const cameraId = pickBackCameraId(devices);
+          if (!cameraId) {
+            showMsg("找不到相機", "error");
+            return;
           }
-        );
+          await qr.start(cameraId, scanConfig, onScan);
+        }
         scanning = true;
       } catch (e) {
         showMsg(formatCameraError(e), "error");

@@ -1,0 +1,18 @@
+<div class="inline-flex items-center gap-0.5 rounded-lg bg-white p-0.5 ring-1 ring-slate-200">
+  <form method="post" action="/set-language" class="inline">
+    <input type="hidden" name="redirect" value="<%= typeof redirectPath !== 'undefined' ? redirectPath : currentPath %>" />
+    <input type="hidden" name="lang" value="zh" />
+    <button
+      type="submit"
+      class="rounded-md px-2 py-1 text-xs font-medium <%= lang === 'zh' ? 'bg-[#4a2c1a] text-white' : 'text-slate-600 hover:bg-slate-50' %>"
+    ><%= t('lang_zh') %></button>
+  </form>
+  <form method="post" action="/set-language" class="inline">
+    <input type="hidden" name="redirect" value="<%= typeof redirectPath !== 'undefined' ? redirectPath : currentPath %>" />
+    <input type="hidden" name="lang" value="en" />
+    <button
+      type="submit"
+      class="rounded-md px-2 py-1 text-xs font-medium <%= lang === 'en' ? 'bg-[#4a2c1a] text-white' : 'text-slate-600 hover:bg-slate-50' %>"
+    ><%= t('lang_en') %></button>
+  </form>
+</div>
