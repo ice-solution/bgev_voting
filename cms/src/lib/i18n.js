@@ -22,7 +22,7 @@ const STRINGS = {
       how_title: "參與方式",
       step1: "<strong>124B 登記及投票室</strong>：辦理入場登記（投票前必須完成）",
       step2: "<strong>123B / 123C / 124A 展區</strong>：試玩至少 {{min}} 款參賽作品",
-      step3: "掃描你的 QR Code，查看進度並填寫問卷投票",
+      step3: "掃描你的 QR Code，查看進度並投票",
       notice: "須完成登記，並試玩至少 {{min}} 款參賽作品，方可參與投票。建議先到 124B 登記，再前往展區試玩。",
       vote_deadline: "投票將於 {{date}} 香港時間 {{time}}（GMT+8）截止。",
       vote_closed: "投票已於 {{date}} 香港時間 {{time}}（GMT+8）截止。",
@@ -58,7 +58,7 @@ const STRINGS = {
       staff_duplicated: "（此用戶已記錄）"
     },
     survey: {
-      title: "問卷投票",
+      title: "投票",
       back: "← 返回我的資料",
       heading: "你喜歡那個遊戲？",
       desc: "可按組別展開，點選喜歡的遊戲。全部組別合共最多可投 {{max}} 票。",
@@ -87,13 +87,13 @@ const STRINGS = {
       company: "公司",
       progress: "進度",
       played_count: "已玩 {{played}} / {{total}}",
-      survey_hint: "完成 {{min}} 個遊戲後可填問卷。",
-      survey: "問卷",
-      survey_not_eligible: "未達資格（需完成 {{min}} 個遊戲）。",
+      survey_hint: "完成 {{min}} 個遊戲後可投票。",
+      survey: "投票",
+      survey_not_eligible: "未達投票資格（需完成 {{min}} 個遊戲）。",
       survey_voted: "已投票（{{count}} 項）",
       survey_locked: "你已投票，不能更改。",
       survey_closed: "投票已截止（{{date}} 香港時間 {{time}}，GMT+8）。",
-      survey_fill: "填寫問卷",
+      survey_fill: "前往投票",
       played_games: "已玩遊戲"
     }
   },

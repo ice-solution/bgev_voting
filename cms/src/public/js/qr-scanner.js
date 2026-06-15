@@ -122,10 +122,18 @@
         } catch (_) {}
       }
       scanning = false;
-      if (!keepProcessing) processing = false;
       busy = false;
+      if (!keepProcessing) {
+        processing = false;
+        decoded = false;
+      }
       updateScanUi(false);
       setButtonsLocked(false);
+    }
+
+    function resetScanState() {
+      processing = false;
+      decoded = false;
     }
 
     async function startCamera() {
@@ -142,7 +150,7 @@
 
         updateScanUi(true);
         showMsg(i18n.alignQr, "info");
-        processing = false;
+        resetScanState();
 
         const qrboxSize = Math.min(280, Math.floor(window.innerWidth - 64));
         const scanConfig = { fps: 10, qrbox: { width: qrboxSize, height: qrboxSize } };
@@ -151,7 +159,11 @@
           processing = true;
           decoded = true;
           await stopCamera(true);
-          await onDecoded(decodedText);
+          try {
+            await onDecoded(decodedText);
+          } finally {
+            resetScanState();
+          }
         };
 
         try {
@@ -169,7 +181,7 @@
       } catch (e) {
         showMsg(formatCameraError(e, i18n), "error");
         scanning = false;
-        processing = false;
+        resetScanState();
         updateScanUi(false);
         if (qr) {
           try {
@@ -192,7 +204,7 @@
       btnStart.addEventListener("click", startCamera);
     }
 
-    return { startCamera, stopCamera };
+    return { startCamera, stopCamera, resetScanState };
   }
 
   window.QrScanner = {
