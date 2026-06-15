@@ -5,7 +5,10 @@
     <div class="flex items-start justify-between gap-3">
       <div>
         <h2 class="text-lg font-semibold">Staff 掃描</h2>
-        <p class="mt-1 text-sm text-slate-600">選擇組別與遊戲後，掃描用戶 QR Code 記錄「已玩」。</p>
+        <p class="mt-1 text-sm text-slate-600">選擇遊戲後，掃描用戶 QR Code 記錄「已玩」。</p>
+        <div class="mt-2 inline-flex rounded-full bg-orange-100 px-2.5 py-1 text-xs font-medium text-orange-800">
+          <%= categoryLabel %>
+        </div>
       </div>
       <a class="shrink-0 rounded-lg bg-white px-3 py-2 text-sm font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50" href="/">返回</a>
     </div>
@@ -17,7 +20,7 @@
 
   <% if (!authed) { %>
     <section class="rounded-xl border bg-slate-50 p-4">
-      <form method="post" action="/staff/login">
+      <form method="post" action="/staff/group/<%= groupId %>/login">
         <div class="text-sm font-medium">Staff 登入</div>
         <div class="mt-1 text-sm text-slate-600">請輸入 staff token 登入（每個 browser session 只需登入一次）。</div>
         <input name="token" class="mt-3 w-full rounded-lg border px-3 py-2" placeholder="STAFF_TOKEN" autocomplete="off" />
@@ -29,27 +32,19 @@
       <div class="flex items-center justify-between gap-2">
         <div class="text-sm font-medium text-emerald-700">已登入</div>
         <form method="post" action="/staff/logout">
+          <input type="hidden" name="groupId" value="<%= groupId %>" />
           <button class="rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50" type="submit">登出</button>
         </form>
       </div>
 
-      <div class="mt-4 space-y-3">
-        <div>
-          <label for="categorySelect" class="text-sm font-medium text-slate-700">組別</label>
-          <select id="categorySelect" class="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
-            <option value="">請選擇組別</option>
-            <% for (const group of categories) { %>
-              <option value="<%= group.category %>"><%= group.categoryLabel %></option>
-            <% } %>
-          </select>
-        </div>
-
-        <div>
-          <label for="gameSelect" class="text-sm font-medium text-slate-700">遊戲</label>
-          <select id="gameSelect" class="mt-1 w-full rounded-lg border px-3 py-2 text-sm" disabled>
-            <option value="">請先選擇組別</option>
-          </select>
-        </div>
+      <div class="mt-4">
+        <label for="gameSelect" class="text-sm font-medium text-slate-700">遊戲</label>
+        <select id="gameSelect" class="mt-1 w-full rounded-lg border px-3 py-2 text-sm">
+          <option value="">請選擇遊戲</option>
+          <% for (const g of games) { %>
+            <option value="<%= g.id %>"><%= g.name %> (#<%= g.id %>)</option>
+          <% } %>
+        </select>
       </div>
 
       <div id="selectedGameInfo" class="mt-4 hidden rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700"></div>
@@ -77,10 +72,9 @@
 <%- include("partials/scanner_i18n") %>
 <%- include("partials/qr_scanner_scripts") %>
 <script>
-  const categoriesData = <%- JSON.stringify(categories) %>;
+  const gamesData = <%- JSON.stringify(games) %>;
   const scannerI18n = window.__scannerI18n || {};
 
-  const categorySelect = document.getElementById("categorySelect");
   const gameSelect = document.getElementById("gameSelect");
   const selectedGameInfo = document.getElementById("selectedGameInfo");
   const scanSection = document.getElementById("scanSection");
@@ -110,29 +104,6 @@
     }
   }
 
-  function fillGameOptions(categoryKey) {
-    gameSelect.innerHTML = "";
-    if (!categoryKey) {
-      gameSelect.disabled = true;
-      gameSelect.innerHTML = '<option value="">請先選擇組別</option>';
-      return;
-    }
-    const group = categoriesData.find((g) => g.category === categoryKey);
-    if (!group || !group.games.length) {
-      gameSelect.disabled = true;
-      gameSelect.innerHTML = '<option value="">此組別沒有遊戲</option>';
-      return;
-    }
-    gameSelect.disabled = false;
-    gameSelect.innerHTML = '<option value="">請選擇遊戲</option>';
-    for (const g of group.games) {
-      const opt = document.createElement("option");
-      opt.value = String(g.id);
-      opt.textContent = g.name + " (#" + g.id + ")";
-      gameSelect.appendChild(opt);
-    }
-  }
-
   async function stopScannerIfNeeded() {
     if (scannerApi && scannerApi.stopCamera) {
       await scannerApi.stopCamera();
@@ -147,8 +118,7 @@
       stopScannerIfNeeded();
       return;
     }
-    const group = categoriesData.find((g) => g.category === categorySelect.value);
-    const game = group && group.games.find((g) => Number(g.id) === selectedGameId);
+    const game = gamesData.find((g) => Number(g.id) === selectedGameId);
     if (!game) return;
     selectedGameInfo.classList.remove("hidden");
     selectedGameInfo.innerHTML =
@@ -160,13 +130,6 @@
       msgEl.textContent = "";
     }
   }
-
-  categorySelect.addEventListener("change", async () => {
-    await stopScannerIfNeeded();
-    fillGameOptions(categorySelect.value);
-    gameSelect.value = "";
-    updateSelectedGame();
-  });
 
   gameSelect.addEventListener("change", async () => {
     await stopScannerIfNeeded();

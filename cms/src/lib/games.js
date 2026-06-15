@@ -42,6 +42,22 @@ function getGameById(id, lang) {
 
 const CATEGORY_ORDER = ["中學組1", "中學組2", "大專組"];
 
+const STAFF_GROUP_MAP = {
+  1: "中學組1",
+  2: "中學組2",
+  3: "大專組"
+};
+
+function getCategoryByStaffGroupId(groupId) {
+  return STAFF_GROUP_MAP[Number(groupId)] || null;
+}
+
+function getGamesByStaffGroupId(groupId, lang) {
+  const category = getCategoryByStaffGroupId(groupId);
+  if (!category) return null;
+  return getGamesByCategory(lang).find((g) => g.category === category) || null;
+}
+
 function getGamesByCategory(lang) {
   const games = getGames(lang);
   const map = new Map();
@@ -67,4 +83,12 @@ function getGamesByCategory(lang) {
   return ordered;
 }
 
-module.exports = { getGames, getGameById, getGamesByCategory, localizeGame };
+module.exports = {
+  getGames,
+  getGameById,
+  getGamesByCategory,
+  localizeGame,
+  getCategoryByStaffGroupId,
+  getGamesByStaffGroupId,
+  STAFF_GROUP_MAP
+};

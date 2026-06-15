@@ -1,6 +1,6 @@
 const express = require("express");
 const { config } = require("../lib/config");
-const { getGames, getGameById, getGamesByCategory } = require("../lib/games");
+const { getGames, getGameById, getGamesByCategory, getGamesByStaffGroupId } = require("../lib/games");
 const { getDb, clearAllData } = require("../lib/db");
 const { fetchUserProfile, fetchUserProfileByServer } = require("../lib/rsvpApi");
 const { extractProfileDisplay } = require("../lib/profile");
@@ -221,30 +221,46 @@ function isStaffAuthed(req) {
   return Boolean(req.session.staffAuthed) || !config.staffToken;
 }
 
-webRouter.get("/staff", (req, res) => {
-  res.render("staff", {
-    authed: isStaffAuthed(req),
-    categories: getGamesByCategory(),
-    error: null
-  });
-});
-
-webRouter.post("/staff/login", (req, res) => {
-  const token = String(req.body.token || "");
-  if (config.staffToken && token !== config.staffToken) {
-    return res.status(401).render("staff", {
-      authed: false,
-      categories: getGamesByCategory(),
-      error: "Staff token 不正確"
+function renderStaffPage(req, res, groupId, opts = {}) {
+  const categoryGroup = getGamesByStaffGroupId(groupId);
+  if (!categoryGroup) {
+    return res.status(404).render("error", {
+      status: 404,
+      message: "組別不存在"
     });
   }
+  return res.render("staff", {
+    groupId: Number(groupId),
+    categoryGroup,
+    games: categoryGroup.games,
+    categoryLabel: categoryGroup.categoryLabel,
+    authed: isStaffAuthed(req),
+    error: opts.error || null
+  });
+}
+
+webRouter.get("/staff", (req, res) => {
+  res.redirect("/staff/group/1");
+});
+
+webRouter.get("/staff/group/:groupId", (req, res) => {
+  renderStaffPage(req, res, req.params.groupId);
+});
+
+webRouter.post("/staff/group/:groupId/login", (req, res) => {
+  const groupId = req.params.groupId;
+  const token = String(req.body.token || "");
+  if (config.staffToken && token !== config.staffToken) {
+    return renderStaffPage(req, res, groupId, { error: "Staff token 不正確" });
+  }
   req.session.staffAuthed = true;
-  return res.redirect("/staff");
+  return res.redirect("/staff/group/" + encodeURIComponent(groupId));
 });
 
 webRouter.post("/staff/logout", (req, res) => {
+  const groupId = String(req.body.groupId || "1");
   req.session.staffAuthed = null;
-  res.redirect("/staff");
+  res.redirect("/staff/group/" + encodeURIComponent(groupId));
 });
 
 webRouter.get("/staff/:gameId", (req, res) => {
