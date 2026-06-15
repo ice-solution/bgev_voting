@@ -1,7 +1,8 @@
 const STRINGS = {
   zh: {
-    site_title: "香港學界桌上遊戲設計比賽決賽暨成果展",
-    site_subtitle: "Hong Kong Schools Boardgame Design Competition Final and Project Showcase",
+    site_title: "香港學界桌上遊戲設計比賽決賽",
+    site_subtitle: "暨香港桌遊教學及生涯規劃展 2026",
+    document_title: "香港學界桌上遊戲設計比賽決賽 暨香港桌遊教學及生涯規劃展 2026",
     logout: "登出",
     lang_zh: "中",
     lang_en: "EN",
@@ -96,8 +97,10 @@ const STRINGS = {
     }
   },
   en: {
-    site_title: "Hong Kong Schools Boardgame Design Competition Final and Project Showcase",
-    site_subtitle: "香港學界桌上遊戲設計比賽決賽暨成果展",
+    site_title: "Hong Kong Schools Boardgame Design Competition Final",
+    site_subtitle: "Board Game Education & Career Planning Expo 2026",
+    document_title:
+      "Hong Kong Schools Boardgame Design Competition Final and Board Game Education & Career Planning Expo 2026",
     logout: "Log out",
     lang_zh: "中",
     lang_en: "EN",
