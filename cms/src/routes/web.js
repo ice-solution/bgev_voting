@@ -7,6 +7,7 @@ const { extractProfileDisplay } = require("../lib/profile");
 const { getSurveyAnswerIds, hasSurvey } = require("../lib/survey");
 const { t, normalizeLang } = require("../lib/i18n");
 const { applyLanguage, persistUserLanguage, loadUserLanguage, setLanguageCookie } = require("../lib/language");
+const { isVotingOpen, getVotingStatus } = require("../lib/votingDeadline");
 
 const webRouter = express.Router();
 
@@ -62,7 +63,9 @@ async function renderUserProfile(req, res, userId) {
     survey,
     votedGames,
     hasVoted: hasSurvey(survey),
-    canSurvey: plays.length >= config.surveyMinGames
+    canSurvey: plays.length >= config.surveyMinGames,
+    votingOpen: isVotingOpen(),
+    voteDeadline: getVotingStatus(res.locals.lang || "zh")
   });
 }
 
@@ -73,6 +76,11 @@ webRouter.get("/u/survey", async (req, res, next) => {
     const db = await getDb();
     const playedCount = await db.collection("plays").countDocuments({ userId });
     if (playedCount < config.surveyMinGames) {
+      return res.redirect("/u/profile");
+    }
+    const lang = res.locals.lang || req.session.lang || "zh";
+    const voting = getVotingStatus(lang);
+    if (!voting.open) {
       return res.redirect("/u/profile");
     }
     const survey = await db.collection("surveys").findOne({ userId });
@@ -95,9 +103,12 @@ webRouter.get("/u/survey", async (req, res, next) => {
 });
 
 webRouter.get("/", (req, res) => {
+  const lang = res.locals.lang || "zh";
   res.render("home", {
-    categories: getGamesByCategory(res.locals.lang),
-    surveyMinGames: config.surveyMinGames
+    categories: getGamesByCategory(lang),
+    surveyMinGames: config.surveyMinGames,
+    votingOpen: isVotingOpen(),
+    voteDeadline: getVotingStatus(lang)
   });
 });
 

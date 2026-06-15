@@ -22,6 +22,8 @@ const STRINGS = {
       step2: "<strong>123B / 123C / 124A 展區</strong>：試玩至少 {{min}} 款參賽作品",
       step3: "掃描你的 QR Code，查看進度並填寫問卷投票",
       notice: "須完成登記，並試玩至少 {{min}} 款參賽作品，方可參與投票。建議先到 124B 登記，再前往展區試玩。",
+      vote_deadline: "投票將於 {{date}} 香港時間 {{time}}（GMT+8）截止。",
+      vote_closed: "投票已於 {{date}} 香港時間 {{time}}（GMT+8）截止。",
       scan_login: "掃描 QR Code 登入",
       entries_title: "參賽作品"
     },
@@ -70,6 +72,7 @@ const STRINGS = {
       confirm_final: "是否確認選擇？（結果一經送出恕不能更改）",
       submit_fail: "提交失敗：{{error}}",
       already_voted: "你已投票，不能更改。",
+      voting_closed: "投票已截止，無法提交。",
       success_title: "投票成功",
       success_body: "你已投票，不能更改。",
       success_back: "返回我的資料"
@@ -87,6 +90,7 @@ const STRINGS = {
       survey_not_eligible: "未達資格（需完成 {{min}} 個遊戲）。",
       survey_voted: "已投票（{{count}} 項）",
       survey_locked: "你已投票，不能更改。",
+      survey_closed: "投票已截止（{{date}} 香港時間 {{time}}，GMT+8）。",
       survey_fill: "填寫問卷",
       played_games: "已玩遊戲"
     }
@@ -115,6 +119,8 @@ const STRINGS = {
       step3: "Scan your QR code to view progress and complete the survey to vote",
       notice:
         "Check-in and playing at least {{min}} games are required to vote. We recommend registering at 124B first, then visiting the exhibition areas.",
+      vote_deadline: "Voting closes at {{time}} (GMT+8) on {{date}}.",
+      vote_closed: "Voting closed at {{time}} (GMT+8) on {{date}}.",
       scan_login: "Scan QR Code to Sign In",
       entries_title: "Entries"
     },
@@ -163,6 +169,7 @@ const STRINGS = {
       confirm_final: "Confirm your selection? (Votes cannot be changed once submitted)",
       submit_fail: "Submission failed: {{error}}",
       already_voted: "You have already voted. Changes are not allowed.",
+      voting_closed: "Voting has closed. Submissions are not accepted.",
       success_title: "Vote submitted",
       success_body: "You have voted. Changes are not allowed.",
       success_back: "Back to my profile"
@@ -180,6 +187,7 @@ const STRINGS = {
       survey_not_eligible: "Not eligible yet ({{min}} games required).",
       survey_voted: "Voted ({{count}} selected)",
       survey_locked: "You have voted. Changes are not allowed.",
+      survey_closed: "Voting has closed ({{date}} {{time}}, GMT+8).",
       survey_fill: "Take Survey",
       played_games: "Games Played"
     }

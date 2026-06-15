@@ -57,6 +57,10 @@
             <li>• <%= g.name %> — <%= g.school_name %></li>
           <% } %>
         </ul>
+      <% } else if (!votingOpen && voteDeadline.configured) { %>
+        <div class="mt-2 rounded-lg bg-slate-100 px-3 py-2 text-sm text-slate-700">
+          <%= t('profile.survey_closed', { date: voteDeadline.dateLabel, time: voteDeadline.time }) %>
+        </div>
       <% } else { %>
         <a href="/u/survey" class="mt-2 flex w-full items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"><%= t('profile.survey_fill') %></a>
       <% } %>

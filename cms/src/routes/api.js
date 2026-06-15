@@ -8,6 +8,7 @@ const { getGames, getGameById } = require("../lib/games");
 const { getSurveyAnswerIds } = require("../lib/survey");
 const { extractProfileDisplay } = require("../lib/profile");
 const { t, normalizeLang } = require("../lib/i18n");
+const { isVotingOpen } = require("../lib/votingDeadline");
 
 const apiRouter = express.Router();
 
@@ -126,6 +127,11 @@ apiRouter.post("/user/survey", async (req, res, next) => {
     const answerGameIds = [...new Set(rawIds.map((id) => Number(id)).filter((id) => getGameById(id)))];
 
     const lang = userLang(req);
+    if (!isVotingOpen()) {
+      const err = new Error(t(lang, "survey.voting_closed"));
+      err.statusCode = 403;
+      throw err;
+    }
     if (!answerGameIds.length) {
       const err = new Error(t(lang, "survey.select_at_least_one"));
       err.statusCode = 400;

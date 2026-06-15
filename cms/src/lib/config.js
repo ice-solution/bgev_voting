@@ -42,6 +42,11 @@ const config = {
 
   surveyMinGames: Number(process.env.SURVEY_MIN_GAMES || 3),
   surveyMaxVotes: Number(process.env.SURVEY_MAX_VOTES || 3),
+  // 投票截止（香港時間 GMT+8），例：2026-06-15 15:00
+  voteDeadline: process.env.VOTE_DEADLINE || "",
+  // 舊設定（仍相容）
+  voteDeadlineDate: process.env.VOTE_DEADLINE_DATE || "",
+  voteDeadlineTime: process.env.VOTE_DEADLINE_TIME || "15:00",
 
   adminUsername: mustGet("ADMIN_USERNAME"),
   adminPassword: mustGet("ADMIN_PASSWORD"),
