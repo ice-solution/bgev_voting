@@ -85,7 +85,6 @@ webRouter.get("/u/survey", async (req, res, next) => {
     }
     const survey = await db.collection("surveys").findOne({ userId });
     const selectedIds = getSurveyAnswerIds(survey);
-    const lang = res.locals.lang || req.session.lang || "zh";
     if (req.session.lang !== lang) req.session.lang = lang;
     if (req.session.userId) {
       await persistUserLanguage(req.session.userId, lang);
