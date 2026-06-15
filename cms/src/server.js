@@ -73,6 +73,7 @@ async function main() {
     res.locals.staffTokenEnabled = Boolean(config.staffToken);
     res.locals.adminUser = req.session.adminUser || null;
     res.locals.staffGameId = req.session.staffGameId || null;
+    res.locals.staffAuthed = Boolean(req.session.staffAuthed);
     res.locals.userId = req.session.userId || null;
     res.locals.htmlLang = lang === "en" ? "en" : "zh-HK";
     res.locals.t = (key, vars) => t(lang, key, vars);

@@ -11,6 +11,18 @@ const { t, normalizeLang } = require("../lib/i18n");
 
 const apiRouter = express.Router();
 
+function requireStaffAuth(req) {
+  if (!config.staffToken) return;
+  const headerToken = String(req.get("X-STAFF-TOKEN") || "");
+  const okByHeader = headerToken && headerToken === config.staffToken;
+  const okBySession = Boolean(req.session.staffAuthed);
+  if (!okByHeader && !okBySession) {
+    const err = new Error("Staff 未授權");
+    err.statusCode = 401;
+    throw err;
+  }
+}
+
 function requireStaff(req) {
   const gameId = Number(req.params.gameId);
   if (Number.isNaN(gameId) || !getGameById(gameId)) {
@@ -18,17 +30,7 @@ function requireStaff(req) {
     err.statusCode = 400;
     throw err;
   }
-
-  if (config.staffToken) {
-    const headerToken = String(req.get("X-STAFF-TOKEN") || "");
-    const okByHeader = headerToken && headerToken === config.staffToken;
-    const okBySession = Number(req.session.staffGameId) === gameId;
-    if (!okByHeader && !okBySession) {
-      const err = new Error("Staff 未授權");
-      err.statusCode = 401;
-      throw err;
-    }
-  }
+  requireStaffAuth(req);
   return gameId;
 }
 

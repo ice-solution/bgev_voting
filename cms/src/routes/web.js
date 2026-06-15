@@ -207,24 +207,38 @@ webRouter.post("/u/logout", (req, res) => {
   res.redirect("/u");
 });
 
-webRouter.get("/staff/:gameId", (req, res) => {
-  const gameId = Number(req.params.gameId);
-  const game = getGameById(gameId);
-  res.render("staff", { gameId, game, error: null });
+function isStaffAuthed(req) {
+  return Boolean(req.session.staffAuthed) || !config.staffToken;
+}
+
+webRouter.get("/staff", (req, res) => {
+  res.render("staff", {
+    authed: isStaffAuthed(req),
+    categories: getGamesByCategory(),
+    error: null
+  });
 });
 
-webRouter.post("/staff/:gameId/login", (req, res) => {
-  const gameId = Number(req.params.gameId);
+webRouter.post("/staff/login", (req, res) => {
   const token = String(req.body.token || "");
   if (config.staffToken && token !== config.staffToken) {
     return res.status(401).render("staff", {
-      gameId,
-      game: getGameById(gameId),
+      authed: false,
+      categories: getGamesByCategory(),
       error: "Staff token 不正確"
     });
   }
-  req.session.staffGameId = gameId;
-  return res.redirect(`/staff/${encodeURIComponent(gameId)}`);
+  req.session.staffAuthed = true;
+  return res.redirect("/staff");
+});
+
+webRouter.post("/staff/logout", (req, res) => {
+  req.session.staffAuthed = null;
+  res.redirect("/staff");
+});
+
+webRouter.get("/staff/:gameId", (req, res) => {
+  res.redirect("/staff");
 });
 
 webRouter.get("/admin", (req, res) => {
