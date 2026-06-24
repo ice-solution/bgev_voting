@@ -8,7 +8,10 @@ function normalizeGameFields(game) {
   const g = { ...game };
   if (!g.name_zh && g.name) g.name_zh = g.name;
   if (!g.name_en && g.name) g.name_en = g.name;
+  if (!g.school_name_zh && g.school_name) g.school_name_zh = g.school_name;
+  if (!g.school_name_en && g.school_name) g.school_name_en = g.school_name;
   g.name = g.name_zh || g.name_en || g.name || "";
+  g.school_name = g.school_name_zh || g.school_name_en || g.school_name || "";
   return g;
 }
 
@@ -18,6 +21,7 @@ function localizeGame(game, lang) {
   return {
     ...g,
     name: l === "en" ? g.name_en || g.name_zh : g.name_zh || g.name_en,
+    school_name: l === "en" ? g.school_name_en || g.school_name_zh : g.school_name_zh || g.school_name_en,
     categoryLabel: getCategoryLabel(g.category, l)
   };
 }

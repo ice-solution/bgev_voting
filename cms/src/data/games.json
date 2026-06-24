@@ -1,25 +1,186 @@
 [
-  { "id": 1, "name_zh": "Treatment Triumph", "name_en": "Treatment Triumph", "school_name": "聖保祿學校", "category": "中學一組" },
-  { "id": 2, "name_zh": "人生天秤", "name_en": "Balance of Life", "school_name": "聖保祿學校", "category": "中學一組" },
-  { "id": 3, "name_zh": "《巨獸時代：工業紀元》", "name_en": "Titanworks: Age of Industry", "school_name": "葵涌蘇浙公學", "category": "中學一組" },
-  { "id": 4, "name_zh": "帕甚王國", "name_en": "Kingdom of Pash", "school_name": "保良局第一張永慶中學", "category": "中學一組" },
-  { "id": 5, "name_zh": "阿澤拉斯潮汐征服", "name_en": "Arzareth Tide Conquest", "school_name": "明愛粉嶺陳震夏中學", "category": "中學一組" },
-  { "id": 6, "name_zh": "最後的晚餐", "name_en": "The Last Supper", "school_name": "聖保祿學校(中學部)", "category": "中學一組" },
-  { "id": 7, "name_zh": "紫田文化奇跡", "name_en": "Culture Of ZiTin", "school_name": "妙法寺劉金龍中學", "category": "中學一組" },
-  { "id": 8, "name_zh": "𨋢刹罪", "name_en": "Elect-fate-r", "school_name": "宣道會陳瑞芝紀念中學", "category": "中學一組" },
-  { "id": 9, "name_zh": "Anchoris", "name_en": "Anchoris", "school_name": "基督教中國佈道會聖道迦南書院", "category": "中學二組" },
-  { "id": 10, "name_zh": "一網打盡", "name_en": "ExNetal", "school_name": "筲箕灣官立中學", "category": "中學二組" },
-  { "id": 11, "name_zh": "守護舊區", "name_en": "Guardians of Old Districts", "school_name": "聖保祿學校", "category": "中學二組" },
-  { "id": 12, "name_zh": "決策之旅", "name_en": "Choice Challenge", "school_name": "中華基督教會基智中學", "category": "中學二組" },
-  { "id": 13, "name_zh": "迷途顯影", "name_en": "Lost & Found", "school_name": "匯基書院（東九龍）", "category": "中學二組" },
-  { "id": 14, "name_zh": "動物園是活的！", "name_en": "Stir the Zoo！", "school_name": "培僑中學", "category": "中學二組" },
-  { "id": 15, "name_zh": "斜槓人生 博盡無悔", "name_en": "Slash Career, No Regrets", "school_name": "聖保祿學校", "category": "中學二組" },
-  { "id": 16, "name_zh": "貓生迴響", "name_en": "Echoes of Life", "school_name": "聖保祿學校", "category": "中學二組" },
-  { "id": 17, "name_zh": "嗱嗱聲出餐啦！", "name_en": "Laa Laa Sing", "school_name": "香港專業進修學校", "category": "大專組" },
-  { "id": 18, "name_zh": "Bid啲時間", "name_en": "Bid the time", "school_name": "香港專業進修學校", "category": "大專組" },
-  { "id": 19, "name_zh": "嘶子怪獸大作戰", "name_en": "Hiss Monsters: Clash!", "school_name": "香港專業教育學院沙田分校", "category": "大專組" },
-  { "id": 21, "name_zh": "深海釣客", "name_en": "Deep Sea Angler", "school_name": "香港資訊科技學院 位於香港專業教育學院沙田分校", "category": "大專組" },
-  { "id": 22, "name_zh": "色环", "name_en": "chromatic circle", "school_name": "香港資訊科技學院 位於香港專業教育學院沙田分校", "category": "大專組" },
-  { "id": 23, "name_zh": "玄境封神", "name_en": "Xuanjing: Divine Investiture", "school_name": "香港資訊科技學院 位於香港專業教育學院沙田分校", "category": "大專組" },
-  { "id": 24, "name_zh": "虛幻地下城", "name_en": "Virtual Dungeon", "school_name": "香港資訊科技學院 位於香港專業教育學院沙田分校", "category": "大專組" }
+  {
+    "id": 1,
+    "name_zh": "Treatment Triumph",
+    "name_en": "Treatment Triumph",
+    "category": "中學一組",
+    "school_name_zh": "聖保祿學校",
+    "school_name_en": "St. Paul's Convent School"
+  },
+  {
+    "id": 2,
+    "name_zh": "人生天秤",
+    "name_en": "Balance of Life",
+    "category": "中學一組",
+    "school_name_zh": "聖保祿學校",
+    "school_name_en": "St. Paul's Convent School"
+  },
+  {
+    "id": 3,
+    "name_zh": "《巨獸時代：工業紀元》",
+    "name_en": "Titanworks: Age of Industry",
+    "category": "中學一組",
+    "school_name_zh": "葵涌蘇浙公學",
+    "school_name_en": "Kiangsu-Chekiang College (Kwai Chung)"
+  },
+  {
+    "id": 4,
+    "name_zh": "帕甚王國",
+    "name_en": "Kingdom of Pash",
+    "category": "中學一組",
+    "school_name_zh": "保良局第一張永慶中學",
+    "school_name_en": "Po Leung Kuk No.1 W.H. Cheung College"
+  },
+  {
+    "id": 5,
+    "name_zh": "阿澤拉斯潮汐征服",
+    "name_en": "Arzareth Tide Conquest",
+    "category": "中學一組",
+    "school_name_zh": "明愛粉嶺陳震夏中學",
+    "school_name_en": "Caritas Fanling Chan Chun Ha Secondary School"
+  },
+  {
+    "id": 6,
+    "name_zh": "最後的晚餐",
+    "name_en": "The Last Supper",
+    "category": "中學一組",
+    "school_name_zh": "聖保祿學校(中學部)",
+    "school_name_en": "St. Paul's Convent School (Secondary Section)"
+  },
+  {
+    "id": 7,
+    "name_zh": "紫田文化奇跡",
+    "name_en": "Culture Of ZiTin",
+    "category": "中學一組",
+    "school_name_zh": "妙法寺劉金龍中學",
+    "school_name_en": "MFBM Lau Kam Long Secondary School"
+  },
+  {
+    "id": 8,
+    "name_zh": "𨋢刹罪",
+    "name_en": "Elect-fate-r",
+    "category": "中學一組",
+    "school_name_zh": "宣道會陳瑞芝紀念中學",
+    "school_name_en": "Christian Alliance S C Chan Memorial College"
+  },
+  {
+    "id": 9,
+    "name_zh": "Anchoris",
+    "name_en": "Anchoris",
+    "category": "中學二組",
+    "school_name_zh": "基督教中國佈道會聖道迦南書院",
+    "school_name_en": "ECF SAINT TOO CANAAN COLLEGE"
+  },
+  {
+    "id": 10,
+    "name_zh": "一網打盡",
+    "name_en": "ExNetal",
+    "category": "中學二組",
+    "school_name_zh": "筲箕灣官立中學",
+    "school_name_en": "SHAU KEI WAN GOVERNMENT SECONDARY SCHOOL"
+  },
+  {
+    "id": 11,
+    "name_zh": "守護舊區",
+    "name_en": "Guardians of Old Districts",
+    "category": "中學二組",
+    "school_name_zh": "聖保祿學校",
+    "school_name_en": "St. Paul's Convent School"
+  },
+  {
+    "id": 12,
+    "name_zh": "決策之旅",
+    "name_en": "Choice Challenge",
+    "category": "中學二組",
+    "school_name_zh": "中華基督教會基智中學",
+    "school_name_en": "CCC KEI CHI SECONDARY SCHOOL"
+  },
+  {
+    "id": 13,
+    "name_zh": "迷途顯影",
+    "name_en": "Lost & Found",
+    "category": "中學二組",
+    "school_name_zh": "匯基書院（東九龍）",
+    "school_name_en": "United Christian College (Kowloon East)"
+  },
+  {
+    "id": 14,
+    "name_zh": "動物園是活的！",
+    "name_en": "Stir the Zoo！",
+    "category": "中學二組",
+    "school_name_zh": "培僑中學",
+    "school_name_en": "Pui Kiu Middle School"
+  },
+  {
+    "id": 15,
+    "name_zh": "斜槓人生 博盡無悔",
+    "name_en": "Slash Career, No Regrets",
+    "category": "中學二組",
+    "school_name_zh": "聖保祿學校",
+    "school_name_en": "St. Paul’s Convent School"
+  },
+  {
+    "id": 16,
+    "name_zh": "貓生迴響",
+    "name_en": "Echoes of Life",
+    "category": "中學二組",
+    "school_name_zh": "聖保祿學校",
+    "school_name_en": "St Paul’s Convent School"
+  },
+  {
+    "id": 17,
+    "name_zh": "嗱嗱聲出餐啦！",
+    "name_en": "Laa Laa Sing",
+    "category": "大專組",
+    "school_name_zh": "香港專業進修學校",
+    "school_name_en": "Hong Kong College of Technology"
+  },
+  {
+    "id": 18,
+    "name_zh": "Bid啲時間",
+    "name_en": "Bid the time",
+    "category": "大專組",
+    "school_name_zh": "香港專業進修學校",
+    "school_name_en": "Hong Kong College of Technology"
+  },
+  {
+    "id": 19,
+    "name_zh": "嘶子怪獸大作戰",
+    "name_en": "Hiss Monsters: Clash!",
+    "category": "大專組",
+    "school_name_zh": "香港專業教育學院沙田分校",
+    "school_name_en": "The Hong Kong Institute of Vocational Education (ST Campus)"
+  },
+  {
+    "id": 21,
+    "name_zh": "深海釣客",
+    "name_en": "Deep Sea Angler",
+    "category": "大專組",
+    "school_name_zh": "香港資訊科技學院 位於香港專業教育學院沙田分校",
+    "school_name_en": "Hong Kong Institute of Vocational Education @IVE(ST)"
+  },
+  {
+    "id": 22,
+    "name_zh": "色环",
+    "name_en": "chromatic circle",
+    "category": "大專組",
+    "school_name_zh": "香港資訊科技學院 位於香港專業教育學院沙田分校",
+    "school_name_en": "Hong Kong Institute of Vocational Education @IVE(ST)"
+  },
+  {
+    "id": 23,
+    "name_zh": "玄境封神",
+    "name_en": "Xuanjing: Divine Investiture",
+    "category": "大專組",
+    "school_name_zh": "香港資訊科技學院 位於香港專業教育學院沙田分校",
+    "school_name_en": "Hong Kong Institute of Vocational Education @IVE(ST)"
+  },
+  {
+    "id": 24,
+    "name_zh": "虛幻地下城",
+    "name_en": "Virtual Dungeon",
+    "category": "大專組",
+    "school_name_zh": "香港資訊科技學院 位於香港專業教育學院沙田分校",
+    "school_name_en": "Hong Kong Institute of Vocational Education @IVE(ST)"
+  }
 ]
