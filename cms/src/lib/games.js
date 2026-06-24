@@ -40,22 +40,34 @@ function getGameById(id, lang) {
   return lang ? localizeGame(game, lang) : normalizeGameFields(game);
 }
 
-const CATEGORY_ORDER = ["中學組1", "中學組2", "大專組"];
+const CATEGORY_ORDER = ["中學一組", "中學二組", "大專組"];
 
 const STAFF_GROUP_MAP = {
-  1: "中學組1",
-  2: "中學組2",
-  3: "大專組"
+  1: { category: "中學一組" },
+  2: { category: "中學二組" },
+  3: { category: "大專組" }
 };
 
-function getCategoryByStaffGroupId(groupId) {
+function getStaffGroupSpec(groupId) {
   return STAFF_GROUP_MAP[Number(groupId)] || null;
 }
 
+function getCategoryByStaffGroupId(groupId) {
+  return getStaffGroupSpec(groupId)?.category || null;
+}
+
 function getGamesByStaffGroupId(groupId, lang) {
-  const category = getCategoryByStaffGroupId(groupId);
-  if (!category) return null;
-  return getGamesByCategory(lang).find((g) => g.category === category) || null;
+  const spec = getStaffGroupSpec(groupId);
+  if (!spec) return null;
+
+  const games = getGames(lang).filter((g) => g.category === spec.category);
+  if (!games.length) return null;
+
+  return {
+    category: spec.category,
+    categoryLabel: getCategoryLabel(spec.category, lang),
+    games
+  };
 }
 
 function getGamesByCategory(lang) {

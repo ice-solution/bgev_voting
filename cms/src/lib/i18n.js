@@ -200,8 +200,8 @@ const STRINGS = {
 };
 
 const CATEGORY_LABELS = {
-  中學組1: { zh: "中學組1", en: "Secondary Group 1" },
-  中學組2: { zh: "中學組2", en: "Secondary Group 2" },
+  中學一組: { zh: "中學一組", en: "Secondary Group 1" },
+  中學二組: { zh: "中學二組", en: "Secondary Group 2" },
   大專組: { zh: "大專組", en: "Tertiary Group" }
 };
 
