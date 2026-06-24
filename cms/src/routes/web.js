@@ -104,7 +104,7 @@ webRouter.get("/u/survey", async (req, res, next) => {
 webRouter.get("/", (req, res) => {
   const lang = res.locals.lang || "zh";
   res.render("home", {
-    categories: getGamesByCategory(lang),
+    categories: getGamesByCategory(lang, { votableOnly: true }),
     surveyMinGames: config.surveyMinGames,
     votingOpen: isVotingOpen(),
     voteDeadline: getVotingStatus(lang)
