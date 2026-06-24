@@ -4,7 +4,7 @@ const ExcelJS = require("exceljs");
 const { config } = require("../lib/config");
 const { getDb } = require("../lib/db");
 const { fetchUserProfile } = require("../lib/rsvpApi");
-const { getGames, getGameById } = require("../lib/games");
+const { getGames, getGameById, isGameVotable } = require("../lib/games");
 const { getSurveyAnswerIds } = require("../lib/survey");
 const { extractProfileDisplay } = require("../lib/profile");
 const { t, normalizeLang } = require("../lib/i18n");
@@ -124,7 +124,16 @@ apiRouter.post("/user/survey", async (req, res, next) => {
   try {
     const userId = requireUserSession(req);
     const rawIds = Array.isArray(req.body.answerGameIds) ? req.body.answerGameIds : [];
-    const answerGameIds = [...new Set(rawIds.map((id) => Number(id)).filter((id) => getGameById(id)))];
+    const answerGameIds = [
+      ...new Set(
+        rawIds
+          .map((id) => Number(id))
+          .filter((id) => {
+            const game = getGameById(id);
+            return game && isGameVotable(game);
+          })
+      )
+    ];
 
     const lang = userLang(req);
     if (!isVotingOpen()) {

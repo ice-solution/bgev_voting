@@ -91,7 +91,7 @@ webRouter.get("/u/survey", async (req, res, next) => {
     }
     res.render("user_survey", {
       lang,
-      categories: getGamesByCategory(lang),
+      categories: getGamesByCategory(lang, { votableOnly: true }),
       selectedIds,
       hasVoted: selectedIds.length > 0,
       surveyMaxVotes: config.surveyMaxVotes

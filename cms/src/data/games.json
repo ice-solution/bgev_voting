@@ -152,6 +152,15 @@
     "school_name_en": "The Hong Kong Institute of Vocational Education (ST Campus)"
   },
   {
+    "id": 20,
+    "name_zh": "Witches' Brew",
+    "name_en": "Witches' Brew",
+    "category": "大專組",
+    "school_name_zh": "香港城市大學",
+    "school_name_en": "City University of Hong Kong",
+    "votable": false
+  },
+  {
     "id": 21,
     "name_zh": "深海釣客",
     "name_en": "Deep Sea Angler",

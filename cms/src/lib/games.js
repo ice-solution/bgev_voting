@@ -74,10 +74,15 @@ function getGamesByStaffGroupId(groupId, lang) {
   };
 }
 
-function getGamesByCategory(lang) {
+function isGameVotable(game) {
+  return game && game.votable !== false;
+}
+
+function getGamesByCategory(lang, opts = {}) {
   const games = getGames(lang);
   const map = new Map();
   for (const g of games) {
+    if (opts.votableOnly && !isGameVotable(g)) continue;
     const cat = g.category || "其他";
     if (!map.has(cat)) map.set(cat, []);
     map.get(cat).push(g);
@@ -103,6 +108,7 @@ module.exports = {
   getGames,
   getGameById,
   getGamesByCategory,
+  isGameVotable,
   localizeGame,
   getCategoryByStaffGroupId,
   getGamesByStaffGroupId,
