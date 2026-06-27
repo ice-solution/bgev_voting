@@ -121,7 +121,7 @@ const STRINGS = {
       how_title: "How to Participate",
       step1: "<strong>Room 124B Registration & Voting</strong>: Complete check-in (required before voting)",
       step2: "<strong>Rooms 123B / 123C / 124A</strong>: Try at least {{min}} shortlisted games",
-      step3: "Scan your QR code to view progress and complete the survey to vote",
+      step3: "Scan your QR code to view progress and vote",
       notice:
         "Check-in and playing at least {{min}} games are required to vote. We recommend registering at 124B first, then visiting the exhibition areas.",
       vote_deadline: "Voting closes at {{time}} (GMT+8) on {{date}}.",
@@ -158,7 +158,7 @@ const STRINGS = {
       staff_duplicated: "(Already recorded)"
     },
     survey: {
-      title: "Survey & Vote",
+      title: "Vote",
       back: "← Back to my profile",
       heading: "Which games do you like?",
       desc: "Expand each group and tap to select your favourites. You may cast up to {{max}} votes in total.",
@@ -187,13 +187,13 @@ const STRINGS = {
       company: "Company",
       progress: "Progress",
       played_count: "Played {{played}} / {{total}}",
-      survey_hint: "Complete {{min}} games to unlock the survey.",
-      survey: "Survey",
+      survey_hint: "Complete {{min}} games to unlock voting.",
+      survey: "Vote",
       survey_not_eligible: "Not eligible yet ({{min}} games required).",
       survey_voted: "Voted ({{count}} selected)",
       survey_locked: "You have voted. Changes are not allowed.",
       survey_closed: "Voting has closed ({{date}} {{time}}, GMT+8).",
-      survey_fill: "Take Survey",
+      survey_fill: "Go to Vote",
       played_games: "Games Played"
     }
   }
